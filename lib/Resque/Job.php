@@ -202,12 +202,12 @@ class Resque_Job
 	 */
 	public function fail($exception)
 	{
-		Resque_Event::trigger('onFailure', array(
-			'exception' => $exception,
-			'job' => $this,
-		));
-
 		$this->updateStatus(Resque_Job_Status::STATUS_FAILED);
+		//任务执行失败状态后置
+        Resque_Event::trigger('onFailure', array(
+            'exception' => $exception,
+            'job' => $this,
+        ));
 		require_once dirname(__FILE__) . '/Failure.php';
 		Resque_Failure::create(
 			$this->payload,
