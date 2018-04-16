@@ -233,7 +233,6 @@ class Resque_Worker
 	public function perform(Resque_Job $job)
 	{
 		try {
-			Resque_Event::trigger('afterFork', $job);
 			$job->perform();
 		}
 		catch(Exception $e) {
@@ -243,6 +242,8 @@ class Resque_Worker
 		}
 
 		$job->updateStatus(Resque_Job_Status::STATUS_COMPLETE);
+		//任务执行完毕状态后置
+        Resque_Event::trigger('afterFork', $job);
 		$this->log('done ' . $job);
 	}
 
